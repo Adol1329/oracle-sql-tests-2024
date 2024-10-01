@@ -1,0 +1,237 @@
+CREATE TABLE categories (
+        id NUMBER PRIMARY KEY,
+       name VARCHAR2(50)
+  );
+
+
+
+ CREATE TABLE books (
+       book_id NUMBER PRIMARY KEY,
+        title VARCHAR2(255),
+        category_id NUMBER,
+        FOREIGN KEY (category_id) REFERENCES categories(id)
+   );
+
+
+
+CREATE TABLE authors (
+        author_id NUMBER PRIMARY KEY,
+        author_name VARCHAR2(100)
+   );
+
+
+
+ CREATE TABLE book_author (
+        book_id NUMBER,
+        author_id NUMBER,
+        PRIMARY KEY (book_id, author_id),
+        FOREIGN KEY (book_id) REFERENCES books(book_id),
+        FOREIGN KEY (author_id) REFERENCES authors(author_id)
+    );
+
+
+ CREATE TABLE publishers (
+        id NUMBER PRIMARY KEY,
+        name VARCHAR2(100)
+    );
+
+
+
+ CREATE TABLE book_copy (
+        id NUMBER PRIMARY KEY,
+        year_published NUMBER,
+        book_id NUMBER,
+        publisher_id NUMBER,
+        FOREIGN KEY (book_id) REFERENCES books(book_id),
+        FOREIGN KEY (publisher_id) REFERENCES publishers(id)
+    );
+
+
+CREATE TABLE patron_accounts (
+       card_number NUMBER PRIMARY KEY,
+        first_name VARCHAR2(100),
+        surname VARCHAR2(100),
+        email VARCHAR2(100),
+        status VARCHAR2(10)  -- 'active' or 'blocked'
+   );
+
+
+ CREATE TABLE checkout (
+        id NUMBER PRIMARY KEY,
+        start_time TIMESTAMP,
+        end_time TIMESTAMP,
+        book_copy_id NUMBER,
+       patron_account_id NUMBER,
+        is_returned CHAR(3),  -- 'YES' for returned, 'NO' for not returned
+        FOREIGN KEY (book_copy_id) REFERENCES book_copy(id),
+        FOREIGN KEY (patron_account_id) REFERENCES patron_accounts(card_number)
+   );
+
+ CREATE TABLE hold (
+     id NUMBER PRIMARY KEY,
+       start_time TIMESTAMP,
+       end_time TIMESTAMP,
+       book_copy_id NUMBER,
+        patron_account_id NUMBER,
+        FOREIGN KEY (book_copy_id) REFERENCES book_copy(id),
+        FOREIGN KEY (patron_account_id) REFERENCES patron_accounts(card_number)
+    );
+
+ CREATE TABLE waitlist (
+        patron_id NUMBER,
+       book_id NUMBER,
+       PRIMARY KEY (patron_id, book_id),
+        FOREIGN KEY (patron_id) REFERENCES patron_accounts(card_number),
+        FOREIGN KEY (book_id) REFERENCES books(book_id)
+    );
+
+ CREATE TABLE notifications (
+       id NUMBER PRIMARY KEY,
+       sent_at TIMESTAMP,
+        type VARCHAR2(50),
+        patron_account_id NUMBER,
+        FOREIGN KEY (patron_account_id) REFERENCES patron_accounts(card_number)
+);
+   
+CREATE TABLE book_details (
+    detail_id NUMBER PRIMARY KEY,      
+    book_id NUMBER UNIQUE,             
+    long_description VARCHAR2(500),
+    isbn VARCHAR2(20),
+    FOREIGN KEY (book_id) REFERENCES books(book_id)
+);
+
+INSERTING 
+=========
+INSERT INTO categories (id, name) VALUES (1, 'Fantasy');
+INSERT INTO categories (id, name) VALUES (2, 'Science Fiction');
+INSERT INTO categories (id, name) VALUES (3, 'Mystery');
+INSERT INTO categories (id, name) VALUES (4, 'Biography');
+INSERT INTO categories (id, name) VALUES (5, 'Romance');
+INSERT INTO categories (id, name) VALUES (6, 'Thriller');
+INSERT INTO categories (id, name) VALUES (7, 'Self-help');
+INSERT INTO categories (id, name) VALUES (8, 'History');
+INSERT INTO categories (id, name) VALUES (9, 'Horror');
+INSERT INTO categories (id, name) VALUES (10, 'Adventure');
+
+-----------------------------------------------------
+INSERT INTO authors (author_id, author_name) VALUES (1, 'J.K. Rowling');
+INSERT INTO authors (author_id, author_name) VALUES (2, 'George R.R. Martin');
+INSERT INTO authors (author_id, author_name) VALUES (3, 'J.R.R. Tolkien');
+INSERT INTO authors (author_id, author_name) VALUES (4, 'Agatha Christie');
+INSERT INTO authors (author_id, author_name) VALUES (5, 'Stephen King');
+INSERT INTO authors (author_id, author_name) VALUES (6, 'Dan Brown');
+INSERT INTO authors (author_id, author_name) VALUES (7, 'J.D. Salinger');
+INSERT INTO authors (author_id, author_name) VALUES (8, 'Mark Twain');
+INSERT INTO authors (author_id, author_name) VALUES (9, 'Ernest Hemingway');
+INSERT INTO authors (author_id, author_name) VALUES (10, 'Jane Austen');
+
+-----------------------------------------------------------------------
+INSERT ALL
+    INTO books (book_id, title, category_id, published_year) VALUES (11, 'Harry Potter and the Sorcerer''s Stone', 1, 1997)
+    INTO books (book_id, title, category_id, published_year) VALUES (12, 'A Game of Thrones', 2, 1996)
+    INTO books (book_id, title, category_id, published_year) VALUES (13, 'The Hobbit', 10, 1937)
+    INTO books (book_id, title, category_id, published_year) VALUES (14, 'Murder on the Orient Express', 3, 1934)
+    INTO books (book_id, title, category_id, published_year) VALUES (15, 'The Shining', 9, 1977)
+    INTO books (book_id, title, category_id, published_year) VALUES (16, 'The Da Vinci Code', 6, 2003)
+    INTO books (book_id, title, category_id, published_year) VALUES (17, 'The Catcher in the Rye', 7, 1951)
+    INTO books (book_id, title, category_id, published_year) VALUES (18, 'Adventures of Huckleberry Finn', 8, 1884)
+    INTO books (book_id, title, category_id, published_year) VALUES (19, 'The Old Man and the Sea', 8, 1952)
+    INTO books (book_id, title, category_id, published_year) VALUES (20, 'Pride and Prejudice', 5, 1813);
+
+
+-----------------------------------------------------------------------------------------
+INSERT INTO book_author (book_id, author_id) VALUES (1, 1); 
+INSERT INTO book_author (book_id, author_id) VALUES (2, 2); 
+INSERT INTO book_author (book_id, author_id) VALUES (3, 3);  
+INSERT INTO book_author (book_id, author_id) VALUES (4, 4);  
+INSERT INTO book_author (book_id, author_id) VALUES (5, 5); 
+INSERT INTO book_author (book_id, author_id) VALUES (6, 6); 
+INSERT INTO book_author (book_id, author_id) VALUES (7, 7);  
+INSERT INTO book_author (book_id, author_id) VALUES (8, 8);  
+INSERT INTO book_author (book_id, author_id) VALUES (9, 9);  
+INSERT INTO book_author (book_id, author_id) VALUES (10, 10);  
+
+----------------------------------------------------------------------------------------------------------------------
+INSERT INTO publishers (id, name) VALUES (1, 'Bloomsbury');
+INSERT INTO publishers (id, name) VALUES (2, 'Bantam Books');
+INSERT INTO publishers (id, name) VALUES (3, 'Houghton Mifflin Harcourt');
+INSERT INTO publishers (id, name) VALUES (4, 'HarperCollins');
+INSERT INTO publishers (id, name) VALUES (5, 'Scribner');
+INSERT INTO publishers (id, name) VALUES (6, 'Penguin Random House');
+INSERT INTO publishers (id, name) VALUES (7, 'Little, Brown and Company');
+INSERT INTO publishers (id, name) VALUES (8, 'Charles Scribner’s Sons');
+INSERT INTO publishers (id, name) VALUES (9, 'Oxford University Press');
+INSERT INTO publishers (id, name) VALUES (10, 'Random House');
+
+--------------------------------------------------------------------------------------------------
+INSERT INTO publishers (id, name) VALUES (1, 'Bloomsbury');
+INSERT INTO publishers (id, name) VALUES (2, 'Bantam Books');
+INSERT INTO publishers (id, name) VALUES (3, 'Houghton Mifflin Harcourt');
+INSERT INTO publishers (id, name) VALUES (4, 'HarperCollins');
+INSERT INTO publishers (id, name) VALUES (5, 'Scribner');
+INSERT INTO publishers (id, name) VALUES (6, 'Penguin Random House');
+INSERT INTO publishers (id, name) VALUES (7, 'Little, Brown and Company');
+INSERT INTO publishers (id, name) VALUES (8, 'Charles Scribner''s Sons');  -- Use two single quotes to escape
+INSERT INTO publishers (id, name) VALUES (9, 'Oxford University Press');
+INSERT INTO publishers (id, name) VALUES (10, 'Random House');
+
+
+--------------------------------------------------------------------------
+INSERT INTO patron_accounts (card_number, first_name, surname, email, status) VALUES (1001, 'Alice', 'Johnson', 'alice.j@plsql.com', 'active');
+INSERT INTO patron_accounts (card_number, first_name, surname, email, status) VALUES (1002, 'Bob', 'Smith', 'bob.s@plsql.com', 'blocked');
+INSERT INTO patron_accounts (card_number, first_name, surname, email, status) VALUES (1003, 'Charlie', 'Brown', 'charlie.b@plsql.com', 'active');
+INSERT INTO patron_accounts (card_number, first_name, surname, email, status) VALUES (1004, 'David', 'Williams', 'david.w@plsql.com', 'active');
+INSERT INTO patron_accounts (card_number, first_name, surname, email, status) VALUES (1005, 'Eve', 'Jones', 'eve.j@plsql.com', 'blocked');
+INSERT INTO patron_accounts (card_number, first_name, surname, email, status) VALUES (1006, 'Frank', 'Miller', 'frank.m@plsql.com', 'active');
+INSERT INTO patron_accounts (card_number, first_name, surname, email, status) VALUES (1007, 'Grace', 'Lee', 'grace.l@plsql.com', 'active');
+INSERT INTO patron_accounts (card_number, first_name, surname, email, status) VALUES (1008, 'Hannah', 'Moore', 'hannah.m@plsql.com', 'blocked');
+INSERT INTO patron_accounts (card_number, first_name, surname, email, status) VALUES (1009, 'Ivy', 'Wilson', 'ivy.w@plsql.com', 'active');
+INSERT INTO patron_accounts (card_number, first_name, surname, email, status) VALUES (1010, 'Jack', 'Taylor', 'jack.t@plsql.com', 'active');
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+INSERT INTO checkout (id, start_time, end_time, book_copy_id, patron_account_id, is_returned) 
+VALUES
+(1, '2024-01-01 10:00:00', '2024-01-15 10:00:00', 1, 1001, 'NO'),
+(2, '2024-02-01 12:00:00', '2024-02-15 12:00:00', 2, 1002, 'YES'),
+(3, '2024-03-01 14:00:00', '2024-03-15 14:00:00', 3, 1003, 'NO'),
+(4, '2024-04-01 16:00:00', '2024-04-15 16:00:00', 4, 1004, 'YES'),
+(5, '2024-05-01 18:00:00', '2024-05-15 18:00:00', 5, 1005, 'NO'),
+(6, '2024-06-01 10:00:00', '2024-06-15 10:00:00', 6, 1006, 'YES'),
+(7, '2024-07-01 12:00:00', '2024-07-15 12:00:00', 7, 1007, 'NO'),
+(8, '2024-08-01 14:00:00', '2024-08-15 14:00:00', 8, 1008, 'YES'),
+(9, '2024-09-01 16:00:00', '2024-09-15 16:00:00', 9, 1009, 'NO'),
+(10, '2024-10-01 18:00:00', '2024-10-15 18:00:00', 10, 1010, 'YES');
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+INSERT INTO hold (id, start_time, end_time, book_copy_id, patron_account_id) 
+VALUES
+(1, '2024-01-01 10:00:00', '2024-01-15 10:00:00', 1, 1001),
+(2, '2024-02-01 12:00:00', '2024-02-15 12:00:00', 2, 1002),
+(3, '2024-03-01 14:00:00', '2024-03-15 14:00:00', 3, 1003),
+(4, '2024-04-01 16:00:00', '2024-04-15 16:00:00', 4, 1004),
+(5, '2024-05-01 18:00:00', '2024-05-15 18:00:00', 5, 1005),
+(6, '2024-06-01 10:00:00', '2024-06-15 10:00:00', 6, 1006),
+(7, '2024-07-01 12:00:00', '2024-07-15 12:00:00', 7, 1007),
+(8, '2024-08-01 14:00:00', '2024-08-15 14:00:00', 8, 1008),
+(9, '2024-09-01 16:00:00', '2024-09-15 16:00:00', 9, 1009),
+(10, '2024-10-01 18:00:00', '2024-10-15 18:00:00', 10, 1010);
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+INSERT INTO notifications (id, sent_at, type, patron_account_id) 
+VALUES
+(1, '2024-01-02 10:00:00', 'Reminder', 1001),
+(2, '2024-02-02 12:00:00', 'Overdue', 1002),
+(3, '2024-03-02 14:00:00', 'Reminder', 1003),
+(4, '2024-04-02 16:00:00', 'Overdue', 1004),
+(5, '2024-05-02 18:00:00', 'Reminder', 1005),
+(6, '2024-06-02 10:00:00', 'Overdue', 1006),
+(7, '2024-07-02 12:00:00', 'Reminder', 1007),
+(8, '2024-08-02 14:00:00', 'Overdue', 1008),
+(9, '2024-09-02 16:00:00', 'Reminder', 1009),
+(10, '2024-10-02 18:00:00', 'Overdue', 1010);
+
+-------------------------------------------------------------------------------------------------------------------
